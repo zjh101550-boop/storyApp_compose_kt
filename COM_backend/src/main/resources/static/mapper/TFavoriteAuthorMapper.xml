@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uos.comp6239backend.mapper.TLibraryMapper">
+
+
+
+<!--根据读者ID查询其所喜欢的作者-->
+  <select id="tFavoriteAuthorList" resultType="com.uos.comp6239backend.tdata.entity.TUsers">
+    select tu.*
+    from t_author_reader tar,t_user tu
+    where  tar.is_use=1 and tu.is_use=1 and tar.reader_id=#{readerId} and tar.reader_id=tu.reader_id
+  </select>
+
+<!--  根据作者名模糊查询其所喜欢的作者 -->
+  <select id="tFavoriteAuthorListByAuthorName" resultType="com.thhy.danfoss.tdata.entity.TUsers">
+    select tu.*
+    from t_author_reader tar,t_user tu
+    where  tar.is_use=1 and tu.is_use=1 and tar.reader_id=#{readerId} and tar.reader_id=tu.reader_id
+    <if test="AuthorName != null and AuthorName != ''">
+        and tu.username like CONCAT('%',#{AuthorName},'%')
+        and tu.user_type = 2
+    </if>
+  </select>
+
+
+<!--  添加喜欢的作者 -->
+  <insert id="tFavoriteAuthorInsert" parameterType="java.util.Map">
+    insert into t_author_reader
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="authorId != null">
+        author_id,
+      </if>
+      <if test="readerId != null">
+        reader_id,
+      </if>
+      <if test="isUsed != null">
+        is_used,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="authorId != null">
+        #{authorId,jdbcType=INTEGER},
+      </if>
+      <if test="readerId != null">
+        #{readerId,jdbcType=INTEGER},
+      </if>
+      <if test="isUsed != null">
+        #{isUsed,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+<!--  根据读者ID和作者ID删除某项喜欢的作者-->
+  <update id="tFavoriteAuthorDel"  parameterType="java.util.Map">
+    update t_library set is_used = 0
+    where reader_id = #{readerId,jdbcType=INTEGER} and author_id = #{authorId,jdbcType=INTEGER}
+  </update>
+
+</mapper>

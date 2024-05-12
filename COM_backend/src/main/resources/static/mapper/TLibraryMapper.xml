@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uos.comp6239backend.mapper.TLibraryMapper">
+
+<!--暂时还有问题-->
+  <select id="tLibraryList" resultType="com.uos.comp6239backend.tdata.entity.TStorys">
+    select ts.*
+    from t_story ts,t_library tl,t_user,tu
+    where  ts.is_use=1 and tl.is_use=1 and tu.is_use=1 and tl.story_id = ts.story_id and tu.user_id = tl.reader_id
+
+  </select>
+
+  <insert id="tLibraryInsert" parameterType="java.util.Map">
+    insert into t_library
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="readerId != null">
+        reader_id,
+      </if>
+      <if test="storyId != null">
+        story_id,
+      </if>
+      <if test="isUsed != null">
+        is_used,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="readerId != null">
+        #{readerId,jdbcType=INTEGER},
+      </if>
+      <if test="storyId != null">
+        #{storyId,jdbcType=INTEGER},
+      </if>
+      <if test="isUsed != null">
+        #{isUsed,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="tLibraryDel"  parameterType="java.util.Map">
+    update t_library set is_used = 0
+    where reader_id = #{readerId,jdbcType=INTEGER} and story_id = #{storyId,jdbcType=INTEGER}
+  </update>
+
+
+</mapper>
