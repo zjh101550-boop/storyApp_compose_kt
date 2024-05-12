@@ -50,6 +50,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,7 +73,6 @@ private enum class PageItem {
 
 @Composable
 fun GuestScreen (nav: NavHostController) {
-    val navController = rememberNavController()
     val pageIndex = remember {
         mutableStateOf(PageItem.MAIN_PAGE)
     }
@@ -86,10 +86,10 @@ fun GuestScreen (nav: NavHostController) {
             bottomBar = { BottomBar(pageIndex) },
         ) { _ ->
             when (pageIndex.value) {
-                PageItem.MAIN_PAGE     -> GuestMain(navController)
-                PageItem.FAVORITE_PAGE -> GuestFavorate(navController)
-                PageItem.LIBRARY_PAGE  -> GuestLibrary(navController)
-                PageItem.PRIVATE_PAGE  -> GuestPrivate(navController)
+                PageItem.MAIN_PAGE     -> GuestMain(nav)
+                PageItem.FAVORITE_PAGE -> GuestFavorate()
+                PageItem.LIBRARY_PAGE  -> GuestLibrary()
+                PageItem.PRIVATE_PAGE  -> GuestPrivate()
             }
         }
     }
@@ -97,35 +97,40 @@ fun GuestScreen (nav: NavHostController) {
 
 @Composable
 fun StoryDescription (story: Story, progress: Boolean = false) {
-    Row {
-        Icon (
+    Row (
+        modifier = Modifier.fillMaxWidth()
+    ){
+        Image (
             painter = painterResource(id = R.drawable.share_guest_navi_item_libry),
             contentDescription = null,
-            modifier = Modifier.size(50.dp)
+            modifier = Modifier.size(120.dp)
         )
+        Spacer(modifier = Modifier.padding(5.dp))
         Column (
             verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = story.author,
-                fontSize = 20.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.padding(5.dp))
+            Spacer(modifier = Modifier.padding(1.dp))
             Text(
                 text = story.title,
-                fontSize = 25.sp
-            )
-            Spacer(modifier = Modifier.padding(5.dp))
-            Text(
-                text = story.description,
-                fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.padding(5.dp))
-            Text(
-                text = "progress: ${story.progress}",
                 fontSize = 20.sp
             )
+            Spacer(modifier = Modifier.padding(1.dp))
+            Text(
+                text = story.description,
+                fontSize = 13.sp
+            )
+            if (progress) {
+                Spacer(modifier = Modifier.padding(1.dp))
+                Text(
+                    text = "progress: ${story.progress}",
+                    fontSize = 15.sp
+                )
+            }
         }
     }
 }
@@ -133,10 +138,13 @@ fun StoryDescription (story: Story, progress: Boolean = false) {
 @Composable
 fun GuestMain (navController: NavHostController) {
     val storyList = remember {
-        mutableStateOf<List<Story>>(listOf())
+        mutableStateOf<List<Story>>(queryStory())
     }
     val storyCategory = remember {
-        mutableStateOf("")
+        if (!storyList.value.isEmpty())
+            mutableStateOf(storyList.value[0].category)
+        else
+            mutableStateOf("")
     }
 
     Column () {
@@ -167,13 +175,16 @@ fun GuestMain (navController: NavHostController) {
                         modifier = Modifier.background(Color.Transparent)
                     ) {
                         Text(
-                            text = "Sign in",
+                            text = story.category,
                             fontSize = 18.sp,
                             color = if (storyCategory.value == story.category)
                                         Color.Blue
                                     else
                                         Color.Black,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            modifier = Modifier.width(30.dp),
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -181,20 +192,23 @@ fun GuestMain (navController: NavHostController) {
         }
         Spacer(modifier = Modifier.padding(8.dp))
         LazyColumn () {
-            items(storyList.value.size) {
-                StoryDescription(storyList.value[it])
+            val filterStories = storyList.value.filter {
+                it.category == storyCategory.value
+            }
+            items(filterStories.size) {
+                StoryDescription(filterStories[it])
             }
         }
     }
 }
 
-private fun queryStory(keyword: String, author: Boolean): List<Story> {
+private fun queryStory(keyword: String = "", author: Boolean = true): List<Story> {
     //TODO
     return listOf()
 }
 
 @Composable
-fun GuestFavorate (navController: NavHostController) {
+fun GuestFavorate () {
     val storyList = queryFavoriteStory()
     LazyColumn () {
         items(storyList.size) {
@@ -209,7 +223,7 @@ private fun queryFavoriteStory (): List<Story> {
 }
 
 @Composable
-fun GuestLibrary (navController: NavHostController) {
+fun GuestLibrary () {
     val storyList = queryLibraryStory()
     LazyColumn () {
         items(storyList.size) {
@@ -224,7 +238,7 @@ private fun queryLibraryStory (): List<Story> {
 }
 
 @Composable
-fun GuestPrivate (navController: NavHostController) {
+fun GuestPrivate () {
 }
 
 //@Composable
@@ -293,6 +307,9 @@ fun TopSearchBar (storyList: MutableState<List<Story>>) {
     var queryAuthor by remember {
         mutableStateOf(true)
     }
+    var queryWord by remember {
+        mutableStateOf("")
+    }
 
     Column (
         modifier = Modifier
@@ -302,7 +319,8 @@ fun TopSearchBar (storyList: MutableState<List<Story>>) {
         OutlinedTextField(
             value = "",
             onValueChange = {
-                storyList.value = queryStory(it, queryAuthor)
+                queryWord = it
+                storyList.value = queryStory(queryWord, queryAuthor)
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
