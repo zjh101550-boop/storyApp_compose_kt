@@ -17,12 +17,12 @@ import com.codelab.basiclayouts.ui.screens.reader.ReaderFavouriteScreen
 import com.codelab.basiclayouts.ui.theme.DarkTheme
 import com.codelab.basiclayouts.data.RetrofitInstance
 import com.codelab.basiclayouts.ui.screens.reader.ReaderLibraryScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // 初始化 RetrofitInstance
-        RetrofitInstance.initialize(this)
         setContent {
             DarkTheme {
                 // A surface container using the 'background' color from the theme
