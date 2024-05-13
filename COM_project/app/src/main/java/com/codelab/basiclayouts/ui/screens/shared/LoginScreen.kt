@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.codelab.basiclayouts.R
+import com.codelab.basiclayouts.model.LoginUser
 import com.codelab.basiclayouts.model.SelectedIdentity.selectedIdentity
 import com.codelab.basiclayouts.ui.components.BottomComponent
 import com.codelab.basiclayouts.ui.components.BottomLoginTextComponent
@@ -42,13 +43,10 @@ import com.codelab.basiclayouts.ui.components.PasswordInputComponent
 fun LoginScreen(
     navController: NavHostController,
     ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
     LoginContent(
         navController = navController,
-        onChangePassword = { password = it },
-        onChangeEmail = { email = it },
+        onChangePassword = { LoginUser.password = it },
+        onChangeEmail = { LoginUser.email = it },
     )
 }
 
@@ -85,10 +83,7 @@ private fun LoginContent(
                     ForgotPasswordTextComponent(navController)
                 }
                 IdentityOptions(
-                    selectedIdentity = selectedIdentity,
-                    onIdentitySelected = { Identity ->
-                        selectedIdentity.value = Identity
-                    }
+                    selectedIdentity = mutableStateOf(selectedIdentity),
                 )
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -97,7 +92,7 @@ private fun LoginContent(
                     Column {
                         MainPageButton(
                             labelVal = "Continue",
-                            identity = selectedIdentity.value,
+                            identity = selectedIdentity,
                             navController = navController,
                             onclick = { }
                         )
@@ -120,19 +115,18 @@ enum class Identity {
 }
 @Composable
 fun IdentityOptions(
-    selectedIdentity: MutableState<Identity>,
-    onIdentitySelected: (Identity) -> Unit
+    selectedIdentity: MutableState<Identity>
 ) {
     Column {
         RadioOption(
             text = "Reader",
             selected = selectedIdentity.value == Identity.READER,
-            onSelect = { onIdentitySelected(Identity.READER) }
+            onSelect = { selectedIdentity.value = Identity.READER }
         )
         RadioOption(
             text = "Author",
             selected = selectedIdentity.value == Identity.AUTHOR,
-            onSelect = { onIdentitySelected(Identity.AUTHOR) }
+            onSelect = { selectedIdentity.value = Identity.AUTHOR }
         )
     }
 }

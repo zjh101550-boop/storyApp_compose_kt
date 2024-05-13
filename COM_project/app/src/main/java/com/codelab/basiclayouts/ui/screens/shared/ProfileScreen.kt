@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -98,10 +99,7 @@ private fun ProfileContent(
         Row(modifier = Modifier.fillMaxWidth()) {
             Box(modifier = Modifier.weight(1F)) {
                 SexOptions(
-                    selectedSex = SelectedSex.selectedSex,
-                    onSexSelected = { sex ->
-                        SelectedSex.selectedSex.value = sex
-                    }
+                    selectedSex = mutableStateOf(SelectedSex.selectedSex),
                 )
                 SexOptionsTextField(
                     labelVal = "Sex",

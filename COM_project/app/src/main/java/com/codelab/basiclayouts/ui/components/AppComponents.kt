@@ -150,8 +150,7 @@ enum class Sex {
 }
 @Composable
 fun SexOptions(
-    selectedSex: MutableState<Sex>,
-    onSexSelected: (Sex) -> Unit
+    selectedSex: MutableState<Sex>
 ) {
     Column (
         horizontalAlignment = Alignment.End,
@@ -162,7 +161,7 @@ fun SexOptions(
         Row(verticalAlignment = Alignment.CenterVertically) {
             RadioButton(
                 selected = selectedSex.value == Sex.MALE,
-                onClick = { onSexSelected(Sex.MALE) },
+                onClick = { selectedSex.value = Sex.MALE },
             )
             Text(
                 text = "Male",
@@ -172,7 +171,7 @@ fun SexOptions(
             )
             RadioButton(
                 selected = selectedSex.value == Sex.FEMALE,
-                onClick = { onSexSelected(Sex.FEMALE) }
+                onClick = { selectedSex.value = Sex.FEMALE }
             )
             Text(
                 text = "Female",

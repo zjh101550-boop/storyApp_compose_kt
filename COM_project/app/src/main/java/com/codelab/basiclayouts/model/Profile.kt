@@ -16,8 +16,13 @@ data class Profile(
 )
 
 object SelectedIdentity {
-    var selectedIdentity = mutableStateOf(Identity.READER)
+    var selectedIdentity = Identity.READER
 }
 object SelectedSex {
-    var selectedSex = mutableStateOf(Sex.MALE)
+    var selectedSex = Sex.MALE
+}
+
+object LoginUser {
+    var email: String = ""
+    var password: String = ""
 }
