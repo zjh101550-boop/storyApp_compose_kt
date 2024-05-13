@@ -17,11 +17,8 @@ fun Navigation() {
 
     NavHost(
         navController = navController,
-        startDestination = "GuestScreen"
+        startDestination = "MainScreen"
     ) {
-        composable(route = "MainScreen") {
-            MainScreen(navController)
-        }
         composable(route = "LoginScreen") {
             LoginScreen(navController)
         }
@@ -34,11 +31,14 @@ fun Navigation() {
         composable(route = "SignupScreen") {
             SignupScreen(navController)
         }
-//        composable(route = "author_home_Screen") {
-//            AuthorMainScreen(navController)
-//        }
+        composable(route = "MainScreen") {
+            MainScreen(navController)
+        }
         composable(route = "GuestScreen") {
             GuestScreen(navController)
         }
+//        composable(route = "author_home_Screen") {
+//            AuthorMainScreen(navController)
+//        }
     }
 }

@@ -52,7 +52,7 @@ fun MainScreen (navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.padding(20.dp))
-            ImageComponent(image = R.drawable.share_main)
+            ImageComponent(image = R.drawable.share_sweet_franky)
             Spacer(modifier = Modifier.height(30.dp))
             MainButton(text = "Sign In") {
                 navController.navigate("LoginScreen")

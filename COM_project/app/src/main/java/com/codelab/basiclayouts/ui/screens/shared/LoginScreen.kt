@@ -15,7 +15,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,10 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.codelab.basiclayouts.R
+import com.codelab.basiclayouts.model.SelectedIdentity.selectedIdentity
 import com.codelab.basiclayouts.ui.components.BottomComponent
 import com.codelab.basiclayouts.ui.components.BottomLoginTextComponent
 import com.codelab.basiclayouts.ui.components.ForgotPasswordTextComponent
@@ -37,13 +37,27 @@ import com.codelab.basiclayouts.ui.components.ImageComponent
 import com.codelab.basiclayouts.ui.components.MainPageButton
 import com.codelab.basiclayouts.ui.components.MyTextField
 import com.codelab.basiclayouts.ui.components.PasswordInputComponent
-import com.codelab.basiclayouts.ui.viewmodel.reader.ReaderFavouriteScreenViewModel
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
-    val loginViewModel  = viewModel<ReaderFavouriteScreenViewModel>()
-    val value by loginViewModel.uiState.collectAsState()
-    var selectedIdentity by remember { mutableStateOf(Identity.READER) }
+fun LoginScreen(
+    navController: NavHostController,
+    ) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    LoginContent(
+        navController = navController,
+        onChangePassword = { password = it },
+        onChangeEmail = { email = it },
+    )
+}
+
+@Composable
+private fun LoginContent(
+    navController: NavHostController,
+    onChangePassword: (String) -> Unit,
+    onChangeEmail: (String) -> Unit,
+) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -56,9 +70,13 @@ fun LoginScreen(navController: NavHostController) {
             HeadingTextComponent(heading = "Login")
             Spacer(modifier = Modifier.height(20.dp))
             Column {
-                MyTextField(labelVal = "email ID", R.drawable.share_at_symbol)
+                MyTextField(
+                    labelVal = "email ID",
+                    R.drawable.share_at_symbol,
+                    onTextChange = onChangeEmail
+                )
                 Spacer(modifier = Modifier.height(15.dp))
-                PasswordInputComponent(labelVal = "Password")
+                PasswordInputComponent(labelVal = "Password", onChangePassword)
                 Spacer(modifier = Modifier.height(15.dp))
                 Row(
                     horizontalArrangement = Arrangement.End,
@@ -66,15 +84,23 @@ fun LoginScreen(navController: NavHostController) {
                 ) {
                     ForgotPasswordTextComponent(navController)
                 }
-                IdentityOptions(selectedIdentity = selectedIdentity, onIdentitySelected = { selectedIdentity = it })
+                IdentityOptions(
+                    selectedIdentity = selectedIdentity,
+                    onIdentitySelected = { Identity ->
+                        selectedIdentity.value = Identity
+                    }
+                )
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.TopStart
                 ) {
                     Column {
-                        MainPageButton(labelVal = "Continue", identity = selectedIdentity, navController = navController){
-                            loginViewModel.tFavoriteAuthorList(3)
-                        }
+                        MainPageButton(
+                            labelVal = "Continue",
+                            identity = selectedIdentity.value,
+                            navController = navController,
+                            onclick = { }
+                        )
                         BottomComponent()
                         Spacer(modifier = Modifier.height(5.dp))
                         BottomLoginTextComponent(
@@ -93,16 +119,19 @@ enum class Identity {
     AUTHOR
 }
 @Composable
-fun IdentityOptions(selectedIdentity: Identity, onIdentitySelected: (Identity) -> Unit) {
+fun IdentityOptions(
+    selectedIdentity: MutableState<Identity>,
+    onIdentitySelected: (Identity) -> Unit
+) {
     Column {
         RadioOption(
             text = "Reader",
-            selected = selectedIdentity == Identity.READER,
+            selected = selectedIdentity.value == Identity.READER,
             onSelect = { onIdentitySelected(Identity.READER) }
         )
         RadioOption(
             text = "Author",
-            selected = selectedIdentity == Identity.AUTHOR,
+            selected = selectedIdentity.value == Identity.AUTHOR,
             onSelect = { onIdentitySelected(Identity.AUTHOR) }
         )
     }

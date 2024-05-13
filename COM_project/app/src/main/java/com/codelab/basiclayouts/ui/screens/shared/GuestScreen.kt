@@ -68,7 +68,7 @@ private enum class PageItem {
     MAIN_PAGE,
     FAVORITE_PAGE,
     LIBRARY_PAGE,
-    PRIVATE_PAGE,
+    PROFILE_PAGE,
 }
 
 @Composable
@@ -89,7 +89,7 @@ fun GuestScreen (nav: NavHostController) {
                 PageItem.MAIN_PAGE     -> GuestMain(nav)
                 PageItem.FAVORITE_PAGE -> GuestFavorate()
                 PageItem.LIBRARY_PAGE  -> GuestLibrary()
-                PageItem.PRIVATE_PAGE  -> GuestPrivate()
+                PageItem.PROFILE_PAGE  -> GuestPrivate()
             }
         }
     }
@@ -178,9 +178,9 @@ fun GuestMain (navController: NavHostController) {
                             text = story.category,
                             fontSize = 18.sp,
                             color = if (storyCategory.value == story.category)
-                                        Color.Blue
-                                    else
-                                        Color.Black,
+                                Color.Blue
+                            else
+                                Color.Black,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             modifier = Modifier.width(30.dp),
@@ -273,7 +273,7 @@ fun TopBar (navController: NavHostController, storyList: MutableState<List<Story
     ) {
         Spacer(modifier = Modifier.padding(3.dp))
         Image (
-            painterResource(id = R.drawable.share_main),
+            painterResource(id = R.drawable.share_baby_mummy),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -417,9 +417,9 @@ private fun BottomBar (pageIndex: MutableState<PageItem>) {
             )}
         )
         NavigationBarItem(
-            selected = pageIndex.value == PageItem.PRIVATE_PAGE,
+            selected = pageIndex.value == PageItem.PROFILE_PAGE,
             onClick = {
-                pageIndex.value = PageItem.PRIVATE_PAGE
+                pageIndex.value = PageItem.PROFILE_PAGE
             },
             icon = { Image(
                 painter = painterResource(id = R.drawable.share_guest_navi_item_private),
@@ -427,7 +427,7 @@ private fun BottomBar (pageIndex: MutableState<PageItem>) {
                 modifier = Modifier.size(40.dp)
             ) },
             label = { Text(
-                text = "private",
+                text = "profile",
                 fontSize = 15.sp
             ) }
         )
