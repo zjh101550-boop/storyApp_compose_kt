@@ -1,12 +1,11 @@
 package com.codelab.basiclayouts.ui.screens.shared
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,12 +18,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.darkColors
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -43,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -55,8 +52,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.codelab.basiclayouts.R
 import com.codelab.basiclayouts.model.Story
@@ -65,6 +60,7 @@ import com.codelab.basiclayouts.model.favoStories
 import com.codelab.basiclayouts.model.librStories
 import com.codelab.basiclayouts.ui.theme.BorderColor
 import com.codelab.basiclayouts.ui.theme.BrandColor
+import com.codelab.basiclayouts.ui.theme.Primary
 import com.codelab.basiclayouts.ui.theme.Tertirary
 
 private enum class PageItem {
@@ -92,7 +88,7 @@ fun GuestScreen (nav: NavHostController) {
                 PageItem.MAIN_PAGE     -> GuestMain(nav)
                 PageItem.FAVORITE_PAGE -> GuestFavorate()
                 PageItem.LIBRARY_PAGE  -> GuestLibrary()
-                PageItem.PROFILE_PAGE  -> GuestPrivate()
+                PageItem.PROFILE_PAGE  -> GuestProfile(nav)
             }
         }
     }
@@ -142,6 +138,7 @@ fun StoryDescription (story: Story, progress: Boolean = false) {
     }
 }
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun GuestMain (navController: NavHostController) {
     val initStories = queryStory()
@@ -264,7 +261,8 @@ private fun queryLibraryStory (): List<Story> {
 }
 
 @Composable
-fun GuestPrivate () {
+fun GuestProfile (navController: NavHostController) {
+    navController.navigate("ProfileScreen")
 }
 
 //@Composable
@@ -299,12 +297,13 @@ fun TopBar (navController: NavHostController, storyList: MutableState<List<Story
     ) {
         Spacer(modifier = Modifier.padding(3.dp))
         Image (
-            painterResource(id = R.drawable.share_baby_mummy),
+            painterResource(id = R.drawable.share_baby_crow),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(30.dp)
+                .size(40.dp)
                 .clip(shape = RoundedCornerShape(50))
+                .align(Alignment.CenterVertically)
         )
         Spacer (modifier = Modifier.padding(5.dp))
         TopSearchBar(storyList)
@@ -320,7 +319,7 @@ fun TopBar (navController: NavHostController, storyList: MutableState<List<Story
         ) {
             Text(
                 text = "Sign in",
-                fontSize = 18.sp,
+                fontSize = 15.sp,
                 color = Color.Blue,
                 fontWeight = FontWeight.Bold
             )
@@ -343,7 +342,7 @@ fun TopSearchBar (storyList: MutableState<List<Story>>) {
             .width(260.dp)
     ) {
         OutlinedTextField(
-            value = "",
+            value = queryWord,
             onValueChange = {
                 queryWord = it
                 storyList.value = queryStory(queryWord, queryAuthor)
@@ -403,13 +402,15 @@ private fun BottomBar (pageIndex: MutableState<PageItem>) {
                 pageIndex.value = PageItem.MAIN_PAGE
             },
             icon = { Image(
-                painter = painterResource(id = R.drawable.share_guest_navi_item_main),
+                painter = painterResource(id = R.drawable.share_franky),
                 contentDescription = null,
                 modifier = Modifier.size(40.dp)
             ) },
             label = { Text(
                 text = "main",
-                fontSize = 15.sp
+                fontSize = 15.sp,
+                color = Primary,
+                fontWeight = FontWeight.Bold
             ) }
         )
         NavigationBarItem(
@@ -418,13 +419,15 @@ private fun BottomBar (pageIndex: MutableState<PageItem>) {
                 pageIndex.value = PageItem.FAVORITE_PAGE
             },
             icon = { Image(
-                painter = painterResource(id = R.drawable.share_guest_navi_item_favo),
+                painter = painterResource(id = R.drawable.share_owl),
                 contentDescription = null,
                 modifier = Modifier.size(40.dp)
             ) },
             label = { Text(
                 text = "favorite",
-                fontSize = 15.sp
+                fontSize = 15.sp,
+                color = Primary,
+                fontWeight = FontWeight.Bold
             ) }
         )
         NavigationBarItem(
@@ -433,13 +436,15 @@ private fun BottomBar (pageIndex: MutableState<PageItem>) {
                 pageIndex.value = PageItem.LIBRARY_PAGE
             },
             icon = { Image(
-                painter = painterResource(id = R.drawable.share_guest_navi_item_libry),
+                painter = painterResource(id = R.drawable.share_bone),
                 contentDescription = null,
                 modifier = Modifier.size(40.dp)
             ) },
             label = { Text(
                 text = "library",
-                fontSize = 15.sp
+                fontSize = 15.sp,
+                color = Primary,
+                fontWeight = FontWeight.Bold
             )}
         )
         NavigationBarItem(
@@ -448,13 +453,15 @@ private fun BottomBar (pageIndex: MutableState<PageItem>) {
                 pageIndex.value = PageItem.PROFILE_PAGE
             },
             icon = { Image(
-                painter = painterResource(id = R.drawable.share_guest_navi_item_private),
+                painter = painterResource(id = R.drawable.share_lantern),
                 contentDescription = null,
                 modifier = Modifier.size(40.dp)
             ) },
             label = { Text(
                 text = "profile",
-                fontSize = 15.sp
+                fontSize = 15.sp,
+                color = Primary,
+                fontWeight = FontWeight.Bold
             ) }
         )
     }

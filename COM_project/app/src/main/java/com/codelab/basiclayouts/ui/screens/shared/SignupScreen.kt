@@ -94,7 +94,6 @@ private fun SignupContent(
                     onTextChange = onChangeEmail
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
             SignupTermsAndPrivacyText()
             Box(
                 modifier = Modifier.fillMaxSize(),

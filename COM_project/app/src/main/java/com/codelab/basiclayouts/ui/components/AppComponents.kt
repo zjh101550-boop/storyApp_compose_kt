@@ -188,23 +188,10 @@ fun SexOptionsTextField(
     labelVal: String,
     icon: Int,
 ) {
-    var textVal by remember {
-        mutableStateOf("")
-    }
-    val typeOfKeyboard: KeyboardType = when (labelVal) {
-        "Username" -> KeyboardType.Text
-        "Password" -> KeyboardType.Password
-        "Confirm Password" -> KeyboardType.Password
-        "email ID" -> KeyboardType.Email
-        else -> KeyboardType.Text
-    }
-
     OutlinedTextField(
-        value = textVal,
-        onValueChange = {
-            textVal = it
-        },
-        modifier = Modifier.fillMaxWidth(),
+        value = "", // Empty value to hide the input field
+        onValueChange = { },
+        Modifier.fillMaxWidth(0.3f),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = BrandColor,
             unfocusedBorderColor = BorderColor,
@@ -222,10 +209,6 @@ fun SexOptionsTextField(
                 contentDescription = "at_symbol"
             )
         },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = typeOfKeyboard,
-            imeAction = ImeAction.Done
-        ),
         singleLine = true
     )
 }
@@ -398,7 +381,7 @@ fun MainPageButton(labelVal: String,
         onClick = {
             onclick()
             when (identity) {
-                Identity.READER -> navController.navigate("reader_home_screen")
+                Identity.READER -> navController.navigate("GuestScreen")
                 Identity.AUTHOR -> navController.navigate("author_home_Screen")
             }
         },

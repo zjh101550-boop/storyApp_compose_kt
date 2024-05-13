@@ -10,15 +10,31 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel  @Inject constructor() : ViewModel() {
-    private val _state = MutableStateFlow(Profile())
+    private val _state = MutableStateFlow(
+        Profile(
+            username = "alex",
+            realName = "zzz",
+            selfDescription = "good",
+            email = "@",
+            telephone = "111",
+            password = "111",
+            confirmPassword = "111",
+            profilePictureLink = "https://i.pinimg.com/564x/20/0f/50/200f509408e5ae122d1a45d110f2faa2.jpg"
+        )
+    )
     val state = _state.asStateFlow()
 
     init {
         getUserInfo()
     }
 
-    private fun getUserInfo() =
-        _state.update { it.copy(profilePictureLink = "https://i.pinimg.com/564x/20/0f/50/200f509408e5ae122d1a45d110f2faa2.jpg") }
+    private fun getUserInfo() {
+        _state.update {
+            it.copy(
+                profilePictureLink = "https://i.pinimg.com/564x/20/0f/50/200f509408e5ae122d1a45d110f2faa2.jpg"
+            )
+        }
+    }
 
     fun onChangeUsername(newValue: String) = _state.update { it.copy(username = newValue) }
 

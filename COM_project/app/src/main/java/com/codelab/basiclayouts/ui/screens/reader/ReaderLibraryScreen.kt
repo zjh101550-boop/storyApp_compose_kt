@@ -17,31 +17,34 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.codelab.basiclayouts.R
+import com.codelab.basiclayouts.model.reader.readerTStorys
 import com.codelab.basiclayouts.model.reader.readerTStorysForUiState
+import com.codelab.basiclayouts.ui.uistate.reader.ReaderLibraryScreenUiState
 import com.codelab.basiclayouts.ui.viewmodel.reader.ReaderLibraryScreenViewModel
 
 
 @Composable
 fun ReaderLibraryScreen(viewModel: ReaderLibraryScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
-    val stories by viewModel.uiState.collectAsState()
+    val state = viewModel.uiState.collectAsState().value
 
     Column(modifier = Modifier.padding(16.dp)) {
         LibraryHeader()
-        stories.forEach { story ->
+        state.readerTStorys.forEach { story ->
             StoryCard(story, viewModel)
         }
     }
 }
 
 @Composable
-fun StoryCard(story: readerTStorysForUiState, viewModel: ReaderLibraryScreenViewModel) {
+fun StoryCard(story: readerTStorys, viewModel: ReaderLibraryScreenViewModel) {
     val isFavorited = remember { mutableStateOf(false) }
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), verticalAlignment = Alignment.Top) {
         Image(
-            painter = painterResource(id = R.drawable.ab2_quick_yoga),
+            painter = painterResource(id = R.drawable.ab2_quick_yoga),//换成用户头像
             contentDescription = "Story Cover",
             modifier = Modifier.size(100.dp).clip(CircleShape),
             contentScale = ContentScale.Crop
@@ -51,14 +54,13 @@ fun StoryCard(story: readerTStorysForUiState, viewModel: ReaderLibraryScreenView
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = {
                     isFavorited.value = !isFavorited.value
-                    viewModel.toggleFavorite(story.storyId)
+                    viewModel.toggleFavorite(story.storyId,viewModel.uiState.value.readerId)
                 }) {
                     Icon(Icons.Filled.Favorite, contentDescription = "Favorite", tint = if (isFavorited.value) androidx.compose.ui.graphics.Color.Red else androidx.compose.ui.graphics.Color.Gray)
                 }
-                Text("${story.storyName} by ${story.author}", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text("${story.storyName}", fontWeight = FontWeight.Bold, fontSize = 16.sp)
             }
             Text(story.storyDescription, fontSize = 14.sp)
-            Text("${story.currentProgress}", fontSize = 12.sp, color = androidx.compose.ui.graphics.Color.Gray)
         }
     }
 }

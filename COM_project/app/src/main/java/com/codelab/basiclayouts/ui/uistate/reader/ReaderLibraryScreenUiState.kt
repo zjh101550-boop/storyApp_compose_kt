@@ -1,8 +1,8 @@
 package com.codelab.basiclayouts.ui.uistate.reader
 
-import com.codelab.basiclayouts.model.reader.readerTStorysForUiState
+import com.codelab.basiclayouts.model.reader.readerTStorys
 
-class ReaderLibraryScreenUiState(
-    val readerTStorys: List<readerTStorysForUiState> = listOf(),
-
+data class ReaderLibraryScreenUiState(
+    val readerId : Int = 1,
+    val readerTStorys: List<readerTStorys> = listOf(),
     )

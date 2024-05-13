@@ -1,5 +1,6 @@
 package com.codelab.basiclayouts.ui.screens.shared
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.codelab.basiclayouts.R
 import com.codelab.basiclayouts.model.Profile
@@ -34,10 +37,12 @@ import com.codelab.basiclayouts.ui.viewmodel.shared.ProfileViewModel
 
 @Composable
 fun ProfileScreen(
+    navController: NavHostController,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     ProfileContent(
+        navController = navController,
         state = state,
         onChangeUsername = viewModel::onChangeUsername,
         onChangeRealName = viewModel::onChangeRealName,
@@ -48,8 +53,10 @@ fun ProfileScreen(
     )
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 private fun ProfileContent(
+    navController: NavHostController,
     state: Profile,
     onChangeUsername: (String) -> Unit,
     onChangeRealName: (String) -> Unit,
@@ -134,5 +141,6 @@ private fun ProfileContent(
 @Preview(showBackground = true)
 @Composable
 fun PreviewProfileScreen() {
-    ProfileScreen()
+    val navController = rememberNavController()
+    ProfileScreen(navController = navController)
 }
