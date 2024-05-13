@@ -1,4 +1,4 @@
-package com.codelab.basiclayouts.ui.uistate.author
+ package com.codelab.basiclayouts.ui.uistate.author
 
 data class AuthorEditUiState2(
     val thisChapter:ChapterAU,

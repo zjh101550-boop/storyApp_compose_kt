@@ -60,6 +60,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.codelab.basiclayouts.R
 import com.codelab.basiclayouts.model.Story
+import com.codelab.basiclayouts.model.allStories
+import com.codelab.basiclayouts.model.favoStories
+import com.codelab.basiclayouts.model.librStories
 import com.codelab.basiclayouts.ui.theme.BorderColor
 import com.codelab.basiclayouts.ui.theme.BrandColor
 import com.codelab.basiclayouts.ui.theme.Tertirary
@@ -112,17 +115,21 @@ fun StoryDescription (story: Story, progress: Boolean = false) {
             Text(
                 text = story.author,
                 fontSize = 15.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 1
             )
             Spacer(modifier = Modifier.padding(1.dp))
             Text(
                 text = story.title,
-                fontSize = 20.sp
+                fontSize = 18.sp,
+                maxLines = 1
             )
             Spacer(modifier = Modifier.padding(1.dp))
             Text(
                 text = story.description,
-                fontSize = 13.sp
+                fontSize = 14.sp,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
             if (progress) {
                 Spacer(modifier = Modifier.padding(1.dp))
@@ -137,8 +144,18 @@ fun StoryDescription (story: Story, progress: Boolean = false) {
 
 @Composable
 fun GuestMain (navController: NavHostController) {
+    val initStories = queryStory()
+
     val storyList = remember {
-        mutableStateOf<List<Story>>(queryStory())
+        mutableStateOf<List<Story>>(initStories)
+    }
+    val categoryList = remember {
+        val category = mutableListOf<String>()
+        initStories.forEach {
+            if (it.category !in category)
+                category.add(it.category)
+        }
+        mutableStateOf(category)
     }
     val storyCategory = remember {
         if (!storyList.value.isEmpty())
@@ -163,11 +180,11 @@ fun GuestMain (navController: NavHostController) {
                 horizontalArrangement = Arrangement.Start,
                 modifier = Modifier.horizontalScroll(rememberScrollState())
             ) {
-                for (story in storyList.value) {
+                for (cl in categoryList.value) {
                     Button(
                         enabled = true,
                         onClick = {
-                            storyCategory.value = story.category
+                            storyCategory.value = cl
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent
@@ -175,15 +192,15 @@ fun GuestMain (navController: NavHostController) {
                         modifier = Modifier.background(Color.Transparent)
                     ) {
                         Text(
-                            text = story.category,
+                            text = cl,
                             fontSize = 18.sp,
-                            color = if (storyCategory.value == story.category)
+                            color = if (storyCategory.value == cl)
                                 Color.Blue
                             else
                                 Color.Black,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
-                            modifier = Modifier.width(30.dp),
+                            modifier = Modifier.width(65.dp),
                             overflow = TextOverflow.Ellipsis
                         )
                     }
@@ -197,6 +214,7 @@ fun GuestMain (navController: NavHostController) {
             }
             items(filterStories.size) {
                 StoryDescription(filterStories[it])
+                Spacer(modifier = Modifier.padding(5.dp))
             }
         }
     }
@@ -204,7 +222,15 @@ fun GuestMain (navController: NavHostController) {
 
 private fun queryStory(keyword: String = "", author: Boolean = true): List<Story> {
     //TODO
-    return listOf()
+    if (keyword.isEmpty())
+        return allStories
+
+    return allStories.filter {
+        if (author)
+            keyword == it.author
+        else
+            keyword ==it.title
+    }
 }
 
 @Composable
@@ -219,7 +245,7 @@ fun GuestFavorate () {
 
 private fun queryFavoriteStory (): List<Story> {
     //TODO
-    return listOf()
+    return favoStories
 }
 
 @Composable
@@ -234,7 +260,7 @@ fun GuestLibrary () {
 
 private fun queryLibraryStory (): List<Story> {
     //TODO
-    return listOf()
+    return librStories
 }
 
 @Composable
