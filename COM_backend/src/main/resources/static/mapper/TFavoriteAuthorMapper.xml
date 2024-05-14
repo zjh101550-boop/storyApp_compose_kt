@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.uos.comp6239backend.mapper.TLibraryMapper">
+<mapper namespace="com.uos.comp6239backend.mapper.TFavoriteAuthorMapper">
 
-
+  <!--根据故事ID查找作者-->
+  <select id="findAuthorIdByStoryId" resultType="java.lang.Integer">
+    select ts.author_id
+    from t_story ts
+    where  ts.is_used=1 and ts.story_id=#{storyId}
+  </select>
 
 <!--根据读者ID查询其所喜欢的作者-->
   <select id="tFavoriteAuthorList" resultType="com.uos.comp6239backend.tdata.entity.TUsers">
     select tu.*
-    from t_author_reader tar,t_user tu
-    where  tar.is_use=1 and tu.is_use=1 and tar.reader_id=#{readerId} and tar.reader_id=tu.reader_id
+    from t_author_reader tar,t_users tu
+    where  tar.is_used=1 and tu.is_used=1 and tar.reader_id=#{readerId} and tar.author_id=tu.user_id
   </select>
 
 <!--  根据作者名模糊查询其所喜欢的作者 -->
-  <select id="tFavoriteAuthorListByAuthorName" resultType="com.thhy.danfoss.tdata.entity.TUsers">
-    select tu.*
-    from t_author_reader tar,t_user tu
-    where  tar.is_use=1 and tu.is_use=1 and tar.reader_id=#{readerId} and tar.reader_id=tu.reader_id
+  <select id="tFavoriteAuthorListByAuthorName" resultType="com.uos.comp6239backend.tdata.entity.TUsers">
+    select DISTINCT tu.*
+    from t_author_reader tar,t_users tu
+    where  tar.is_used=1 and tu.is_used=1 and tar.reader_id=#{readerId}
     <if test="AuthorName != null and AuthorName != ''">
-        and tu.username like CONCAT('%',#{AuthorName},'%')
+        and tu.username like CONCAT('%',#{AuthorName},'%') or tu.email like CONCAT('%',#{AuthorName},'%')
         and tu.user_type = 2
     </if>
   </select>
@@ -52,7 +57,7 @@
 
 <!--  根据读者ID和作者ID删除某项喜欢的作者-->
   <update id="tFavoriteAuthorDel"  parameterType="java.util.Map">
-    update t_library set is_used = 0
+    update t_author_reader tar set is_used = 0
     where reader_id = #{readerId,jdbcType=INTEGER} and author_id = #{authorId,jdbcType=INTEGER}
   </update>
 

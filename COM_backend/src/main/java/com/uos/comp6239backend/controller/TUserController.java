@@ -31,14 +31,42 @@ public class TUserController {
     private TUsersService tUsersService;
 
     /**
-     *添加用户
+     *根据读者ID展示其收藏的所有的书和剧本作者，阅读进度,返回TStoryDetail
      * @param values
      * @return
      */
-    @PostMapping("/tUsersInsert")
-    @ApiOperation(value = "添加新用户", notes = "创建并返回一个新用户")
-    public ResponseMap.ResultData tUsersInsert(@RequestBody Map<String,Object> values, HttpServletRequest request){
-        log.info("添加新用户");
-        return tUsersService.tUsersInsert(values);
+    @PostMapping("/profileInsert")
+    @ApiOperation(value = "profileInsert", notes = "profileInsert")
+    public ResponseMap.ResultData profileInsert(@RequestBody Map<String,Object> values, HttpServletRequest request){
+        return tUsersService.profileInsert(values);
     }
+
+    /**
+     *根据读者ID展示剧本作者，阅读进度等等所有的东西，十分重要
+     * @param values
+     * @return
+     */
+    @PostMapping("/profileUpdate")
+    @ApiOperation(value = "profileUpdate", notes = "profileUpdate")
+    public ResponseMap.ResultData profileUpdate(@RequestBody Map<String,Object> values, HttpServletRequest request){
+        return tUsersService.profileUpdate(values);
+    }
+
+    /**
+     *根据null展示剧本作者，阅读进度等等所有的东西，十分重要
+     * @param values
+     * @return
+     */
+    @PostMapping("/selectProfileByUserId")
+    @ApiOperation(value = "selectProfileByUserId", notes = "selectProfileByUserId")
+    public ResponseMap.ResultData selectProfileByUserId(@RequestBody Map<String,Object> values, HttpServletRequest request){
+        return tUsersService.selectProfileByUserId(values);
+    }
+
+    @PostMapping("/selectProfileByEmail")
+    @ApiOperation(value = "selectProfileByEmail", notes = "selectProfileByEmail")
+    public ResponseMap.ResultData selectProfileByEmail(@RequestBody Map<String,Object> values, HttpServletRequest request){
+        return tUsersService.selectProfileByEmail(values);
+    }
+
 }

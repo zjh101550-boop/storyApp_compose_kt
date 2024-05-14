@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uos.comp6239backend.mapper.TUsersMapper">
+
+    <resultMap id="profileResultMap" type="com.uos.comp6239backend.tdata.entity.Profile">
+        <result property="userId" column="userId"/>
+        <result property="username" column="username"/>
+        <result property="realName" column="realName"/>
+        <result property="selfDescription" column="selfDescription"/>
+        <result property="email" column="email"/>
+        <result property="telephone" column="telephone"/>
+        <result property="password" column="password"/>
+        <result property="profilePictureLink" column="profilePictureLink"/>
+    </resultMap>
+    <!--  新增用户 -->
+    <insert id="profileInsert" parameterType="java.util.Map">
+        insert into t_users
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="username != null">
+                username,
+            </if>
+            <if test="realName != null">
+                real_name,
+            </if>
+            <if test="selfDescription != null">
+                self_description,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="telephone != null">
+                telephone,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="profilePictureLink != null">
+                photo_url,
+            </if>
+            is_used
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="selfDescription != null">
+                #{selfDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="telephone != null">
+                #{telephone,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="profilePictureLink != null">
+                #{profilePictureLink,jdbcType=VARCHAR},
+            </if>
+            1
+        </trim>
+    </insert>
+
+    <!--  根据ID更新某项 -->
+    <update id="profileUpdate"  parameterType="java.util.Map">
+        update t_users
+        <set>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                real_name = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="selfDescription != null">
+                self_description = #{selfDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="telephone != null">
+                telephone = #{telephone,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="profilePictureLink != null">
+                photo_url = #{profilePictureLink,jdbcType=VARCHAR},
+            </if>
+            is_used = 1
+        </set>
+        where user_id = #{userId,jdbcType=INTEGER}
+    </update>
+
+
+
+    <select id="selectProfileByUserId" parameterType="int" resultMap="profileResultMap">
+    SELECT
+        user_id AS "userId",
+        username AS "username",
+        real_name AS "realName",
+        self_description AS "selfDescription",
+        email AS "email",
+        telephone AS "telephone",
+        password AS "password",
+        photo_url AS "profilePictureLink"
+    FROM t_users
+    WHERE user_id = #{userId}
+</select>
+
+    <select id="selectProfileByEmail" parameterType="string" resultMap="profileResultMap">
+        SELECT
+            user_id AS "userId",
+            username AS "username",
+            real_name AS "realName",
+            self_description AS "selfDescription",
+            email AS "email",
+            telephone AS "telephone",
+            password AS "password",
+            photo_url AS "profilePictureLink"
+        FROM t_users
+        WHERE email = #{email}
+    </select>
+
+
+
+</mapper>

@@ -25,11 +25,32 @@ public class TUsersServiceImpl implements TUsersService {
     @Autowired
     private TUsersMapper tUsersMapper;
 
-    @Override
     @Transactional //添加事务
-    public ResponseMap.ResultData tUsersInsert(Map<String, Object> values) {
-        tUsersMapper.tUsersInsert(values);
-        log.info("成功插入一条用户数据"); // logger.info("user {} ", userId);
-        return null;
+    @Override
+    public ResponseMap.ResultData profileInsert(Map<String, Object> values) {
+        tUsersMapper.profileInsert(values);
+        log.info("profileInsert:"+values);
+        return ResponseMap.ok();
+    }
+
+    @Transactional //添加事务
+    @Override
+    public ResponseMap.ResultData profileUpdate(Map<String, Object> values) {
+        tUsersMapper.profileUpdate(values);
+        log.info("profileUpdate:"+values);
+        return ResponseMap.ok();
+    }
+
+    @Override
+    public ResponseMap.ResultData selectProfileByUserId(Map<String, Object> values) {
+        log.info("selectProfileByUserId:"+values);
+        log.info("结果:"+tUsersMapper.selectProfileByUserId(values));
+        return ResponseMap.ok(tUsersMapper.selectProfileByUserId(values));
+    }
+
+    @Override
+    public ResponseMap.ResultData selectProfileByEmail(Map<String, Object> values) {
+        log.info("selectProfileByUserId:"+values);
+        return ResponseMap.ok(tUsersMapper.selectProfileByEmail(values));
     }
 }

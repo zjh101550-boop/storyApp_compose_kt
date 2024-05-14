@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uos.comp6239backend.mapper.THistoryMapper">
+
+<!--    history表 -->
+    <!-- 插入阅读历史记录 -->
+    <insert id="insertReaderHistory" parameterType="java.util.Map">
+        INSERT INTO t_reader_story_history (reader_id, story_id, is_used, notes, current_progress)
+        VALUES (#{readerId}, #{storyId}, #{isUsed}, #{notes}, #{currentProgress});
+    </insert>
+
+    <!-- 更新阅读历史记录 -->
+    <update id="updateReaderHistory" parameterType="java.util.Map">
+        UPDATE t_reader_story_history
+        SET is_used = #{isUsed}, notes = #{notes}, current_progress = #{currentProgress}
+        WHERE reader_id = #{readerId} AND story_id = #{storyId}
+    </update>
+
+    <!-- 根据读者ID查找阅读历史 -->
+    <select id="findHistoryByReaderId" parameterType="java.util.Map" resultType="com.uos.comp6239backend.tdata.entity.ReaderStoryHistory">
+        SELECT * FROM t_reader_story_history
+        WHERE reader_id = #{readerId} AND is_used=1
+    </select>
+
+    <!-- 根据故事ID查找阅读历史 -->
+    <select id="findHistoryByStoryId" parameterType="java.util.Map" resultType="com.uos.comp6239backend.tdata.entity.ReaderStoryHistory">
+        SELECT * FROM t_reader_story_history
+        WHERE story_id = #{storyId} AND is_used=1
+    </select>
+
+
+
+<!--    头节点表-->
+
+    <!-- 创建新的阅读路径 -->
+    <insert id="createReadingPath"  useGeneratedKeys="true" keyProperty="reading_path_id" parameterType="java.util.Map">
+        INSERT INTO t_reading_path (start_time, update_time, story_id, start_reading_path_item_id, reader_id)
+        VALUES (#{startTime}, #{updateTime}, #{storyId}, #{startReadingPathItemId}, #{readerId});
+    </insert>
+
+    <!-- 更新阅读路径 -->
+    <update id="updateReadingPath" parameterType="java.util.Map">
+        UPDATE t_reading_path
+        SET update_time = #{updateTime}, start_reading_path_item_id = #{startReadingPathItemId}
+        WHERE reading_path_id = #{readingPathId};
+    </update>
+
+    <!-- 根据路径ID获取阅读路径详情 -->
+    <select id="getReadingPathById" parameterType="java.util.Map" resultType="com.uos.comp6239backend.tdata.entity.ReadingPath">
+        SELECT * FROM t_reading_path
+        WHERE reading_path_id = #{pathId} AND is_used=1
+    </select>
+
+    <!-- 根据故事ID获取所有相关的阅读路径 重要-->
+    <select id="getPathsByStoryId" parameterType="java.util.Map" resultType="com.uos.comp6239backend.tdata.entity.ReadingPath">
+        SELECT * FROM t_reading_path
+        WHERE story_id = #{storyId}  AND reader_id = #{readerId}  ORDER BY update_time ASC
+    </select>
+
+    <!-- 根据故事ID和读者ID查找所有相关的阅读路径,但ItemList部分为空 重要 -->
+    <select id="findHistoryByStoryIdAndReaderId" parameterType="java.util.Map" resultType="com.uos.comp6239backend.tdata.entity.ReadingPath">
+        SELECT * FROM t_reading_path
+        WHERE story_id = #{storyId} and reader_id = #{readerId}
+    </select>
+
+<!--    item表-->
+    <!-- 添加新的阅读路径项 -->
+    <insert id="insertPathItem" useGeneratedKeys="true" keyProperty="reading_path_item_id"  parameterType="java.util.Map">
+        INSERT INTO t_reading_path_item (chapter_id, reading_times, next_reading_path_id, reading_time, `order`)
+        VALUES (#{chapterId}, #{readingTimes}, #{nextReadingPathId}, #{readingTime}, #{order});
+    </insert>
+
+    <!-- 更新现有的阅读路径项 -->
+    <update id="updatePathItem" parameterType="java.util.Map">
+        UPDATE t_reading_path_item
+        SET reading_times = #{readingTimes}, next_reading_path_id = #{nextReadingPathId}, reading_time = #{readingTime}, `order`= #{order}
+        WHERE reading_path_item_id = #{pathItemId} AND is_used=1
+    </update>
+
+    <!-- 根据章节ID获取所有路径项 -->
+    <select id="getPathItemsByChapterId" resultType="com.uos.comp6239backend.tdata.entity.ReadingPathItem">
+        SELECT * FROM t_reading_path_item
+        WHERE chapter_id = #{chapterId} AND is_used=1
+    </select>
+
+    <!-- 根据路径项ID获取详情 -->
+    <select id="getPathItemById" resultType="com.uos.comp6239backend.tdata.entity.ReadingPathItem">
+        SELECT * FROM t_reading_path_item
+        WHERE reading_path_item_id = #{pathItemId} AND is_used=1
+    </select>
+
+    <!-- 根据头节点ID获取所有路径项 -->
+    <select id="getPathItemsByTReadingPathId" resultType="com.uos.comp6239backend.tdata.entity.ReadingPathItem">
+        SELECT trpi.*,tc.chapter_title as chapter_name FROM t_reading_path_item trpi,t_chapter tc
+        WHERE trpi.t_reading_path_id = #{tReadingPathId} and tc.chapter_id = trpi.chapter_id
+    </select>
+
+
+</mapper>

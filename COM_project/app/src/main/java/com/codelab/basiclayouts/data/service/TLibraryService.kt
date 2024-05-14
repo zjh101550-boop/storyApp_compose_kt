@@ -10,6 +10,11 @@ import retrofit2.http.Headers
 import retrofit2.http.Header
 
 interface TLibraryService {
+    /**
+     * 根据读者ID展示图书馆,重要
+     */
+    @POST("/TLibraryCtrl/selectReaderStoryDetail")
+    suspend fun selectReaderStoryDetail(@Body values: Map<String, Int>): ResultData<List<readerTStorysForUiState>>
 
 
     /**
@@ -19,7 +24,7 @@ interface TLibraryService {
     suspend fun tLibraryList(@Body values: Map<String, Int>): ResultData<List<readerTStorys>>
 
     /**
-     * 根据读者ID展示图书馆
+     * 根据读者ID展示图书馆,重要
      */
     @POST("/TLibraryCtrl/tLibraryListReaderStoryForUiState")
     suspend fun tLibraryListReaderStoryForUiState(@Body values: Map<String, Int>): ResultData<List<readerTStorysForUiState>>

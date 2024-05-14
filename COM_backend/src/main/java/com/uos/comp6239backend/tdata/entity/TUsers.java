@@ -58,7 +58,7 @@ public class TUsers implements Serializable {
      * 是否有效
      */
     @ApiModelProperty(value = "是否有效")
-    private Integer isUse;
+    private Integer isUsed;
     /**
      * 性别
      */

@@ -66,10 +66,22 @@
       <if test="readerId != null">
         reader_id,
       </if>
+      <if test="storyId != null">
+        story_id,
+      </if>
+      <if test="isUsed != null">
+        is_used,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="readerId != null">
         #{readerId,jdbcType=INTEGER},
+      </if>
+      <if test="storyId != null">
+        #{storyId,jdbcType=INTEGER},
+      </if>
+      <if test="isUsed != null">
+        #{isUsed,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>

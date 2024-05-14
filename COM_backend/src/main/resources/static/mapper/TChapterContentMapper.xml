@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uos.comp6239backend.mapper.TChapterContentMapper">
+
+
+  <!--  根据故事ID显示本故事的基本信息 -->
+  <select id="tStoryByStoryId" resultType="com.uos.comp6239backend.tdata.entity.TStorys">
+    select ts.* from t_story ts where is_used=1 and story_id=#{storyId}
+  </select>
+
+  <!--  根据章节ID显示本章节的基本信息 -->
+  <select id="tChapterByChapterId" resultType="com.uos.comp6239backend.tdata.entity.TChapter">
+    select ts.* from t_chapter ts where is_used=1 and chapter_id=#{chapterId}
+  </select>
+
+<!--  根据故事ID显示本故事的所有章节 -->
+  <select id="tChapterListByStoryId" resultType="com.uos.comp6239backend.tdata.entity.TChapter">
+    select tc.* from t_chapter tc where is_used=1 and story_id=#{storyId} order by tc.chapter_number desc
+  </select>
+
+<!--  根据章节ID显示本章节的所有内容 -->
+  <select id="tContentListByChapterId" resultType="com.uos.comp6239backend.tdata.entity.TContent">
+    select tc.* from t_content tc where is_used=1 and chapter_id=#{chapterId} order by tc.order desc
+  </select>
+
+  <!--  根据章节ID显示本章节的所有选项 -->
+  <select id="tOptionListByChapterId" resultType="com.uos.comp6239backend.tdata.entity.TOption">
+    select topt.* from t_option topt where is_used=1 and chapter_id=#{chapterId} order by topt.order desc
+  </select>
+
+
+<!--  根据故事ID和章节名模糊查询章节 -->
+  <select id="tChapterByStoryIdAndChapterTitle" resultType="com.uos.comp6239backend.tdata.entity.TChapter">
+    SELECT tc.* from t_chapter tc
+    <where>
+      <if test="storyId != null and storyId != ''">
+        and story_id = #{storyId}
+      </if>
+      <if test="chapterTitle != null and chapterTitle != ''">
+        and tc.chapter_title like CONCAT('%',#{chapterTitle},'%')
+      </if>
+    </where>
+    order by tc.chapter_number desc
+  </select>
+</mapper>

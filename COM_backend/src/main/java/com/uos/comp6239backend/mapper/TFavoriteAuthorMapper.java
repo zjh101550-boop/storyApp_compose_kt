@@ -17,6 +17,7 @@ import java.util.Map;
 @Mapper
 @Repository
 public interface TFavoriteAuthorMapper {
+    Integer findAuthorIdByStoryId(Map<String, Object> values);
     List<TUsers> tFavoriteAuthorList(Map<String, Object> values);
     List<TUsers> tFavoriteAuthorListByAuthorName(Map<String, Object> values);
     void tFavoriteAuthorInsert(Map<String, Object> values);

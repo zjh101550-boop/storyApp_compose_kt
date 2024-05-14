@@ -23,8 +23,9 @@ class AuthorEditViewModel : ViewModel() {
     private val story1 = StoryAU(storyId = 201, storyName = "An Adventure", storyDescription = "A thrilling quest through uncharted territories.", storyCategory = 2, chapterList = listOf(chapter1, chapter2, chapter3), isUsed = 2)
     private val story2 = StoryAU(storyId = 202, storyName = "Empty Story", storyDescription = "This is an empty story", storyCategory = 2, chapterList = listOf(), isUsed = 2)
     private val story3 = StoryAU(storyId = 203, storyName = "Good Story", storyDescription = "This is a good story", storyCategory = 3, chapterList = listOf(), isUsed = 1)
-    private val category1 = CategoryAU(categoryId = 1, categoryName = "Happy")
-    private val category2 = CategoryAU(categoryId = 2, categoryName = "Scare")
+    private val category1 = CategoryAU(categoryId = 1, categoryName = "fantasy")
+    private val category2 = CategoryAU(categoryId = 2, categoryName = "horror")
+    private val category3 = CategoryAU(categoryId = 3, categoryName = "romance")
 
 
     private val _authorEditUiState = MutableStateFlow(
@@ -32,7 +33,7 @@ class AuthorEditViewModel : ViewModel() {
             thisChapter = ChapterAU(),
             thisStory=StoryAU(),
             storyList = listOf(),
-            categoryList = listOf(category1, category2),
+            categoryList = listOf(category1, category2,category3),
             authorId = 4
         )
     )
@@ -73,6 +74,25 @@ class AuthorEditViewModel : ViewModel() {
             }
         }
     }
+
+    fun saveThisStory(story:StoryAU ){
+        viewModelScope.launch {
+            try {
+                // 创建一个 Map，包含读者ID
+//                val params = mapOf("authorId" to authorId)
+                // 调用挂起函数
+                val StoryListResult = RetrofitInstance.tAuthorChapterContentService.tAuthorUpdateStory(story)
+                // 更新状态
+//                _authorEditUiState.value = _authorEditUiState.value.copy(storyList = StoryListResult.data as List<StoryAU>)
+
+//                _uiState.value = ReaderFavouriteScreenUiState(authors = authorsResult.data as List<readerFavoriteAuthor>)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // 在此处可以设置错误状态或采取其他行动
+            }
+        }
+    }
+
 
     init{
         getStoryList(4)
@@ -170,9 +190,9 @@ class AuthorEditViewModel : ViewModel() {
 
     // 生成唯一选项 ID
     private fun generateRandomOptionId(): Int {
-        var newOptionId = Random.nextInt()
+        var newOptionId = Random.nextInt(1,100000)
         while (_authorEditUiState.value.thisChapter.optionList.any { it.optionId == newOptionId }) {
-            newOptionId = Random.nextInt()
+            newOptionId = Random.nextInt(1,100000)
         }
         return newOptionId
     }
@@ -184,9 +204,9 @@ class AuthorEditViewModel : ViewModel() {
 
     // 生成唯一内容 ID
     private fun generateRandomContentId(currentContents: List<ContentAU>): Int {
-        var newContentId = Random.nextInt()
+        var newContentId = Random.nextInt(1,100000)
         while (currentContents.any { it.contentId == newContentId }) {
-            newContentId = Random.nextInt()
+            newContentId = Random.nextInt(1,100000)
         }
         return newContentId
     }

@@ -23,7 +23,7 @@ import com.codelab.basiclayouts.model.Profile
 import com.codelab.basiclayouts.ui.components.BottomSignupTextComponent
 import com.codelab.basiclayouts.ui.components.HeadingTextComponent
 import com.codelab.basiclayouts.ui.components.ImageComponent
-import com.codelab.basiclayouts.ui.components.ConfirmButton
+import com.codelab.basiclayouts.ui.components.ContinueConfirmButton
 import com.codelab.basiclayouts.ui.components.MyTextField
 import com.codelab.basiclayouts.ui.components.PasswordConfirmComponent
 import com.codelab.basiclayouts.ui.components.SignupTermsAndPrivacyText
@@ -42,8 +42,7 @@ fun SignupScreen(
         onChangeUsername = viewModel::onChangeUsername,
         onChangePassword = viewModel::onChangePassword,
         onChangeComfirmPassword = viewModel::onChangeComfirmPassword,
-        onChangeEmail = viewModel::onChangeEmail,
-        onSaveUserInfo = viewModel::onSaveUserInfo
+        onChangeEmail = viewModel::onChangeEmail
     )
 }
 
@@ -55,8 +54,7 @@ private fun SignupContent(
     onChangeUsername: (String) -> Unit,
     onChangePassword: (String) -> Unit,
     onChangeComfirmPassword: (String) -> Unit,
-    onChangeEmail: (String) -> Unit,
-    onSaveUserInfo: () -> Unit,
+    onChangeEmail: (String) -> Unit
 ) {
     Surface(
         modifier = Modifier
@@ -73,7 +71,7 @@ private fun SignupContent(
                 MyTextField(
                     labelVal = "Username",
                     icon = R.drawable.share_lockperson,
-                    onTextChange = onChangeUsername
+                    onTextChange = onChangeUsername,
                 )
                 Spacer(modifier = Modifier.height(15.dp))
                 PasswordConfirmComponent(
@@ -91,7 +89,7 @@ private fun SignupContent(
                 MyTextField(
                     labelVal = "email ID",
                     icon = R.drawable.share_at_symbol,
-                    onTextChange = onChangeEmail
+                    onTextChange = onChangeEmail,
                 )
             }
             SignupTermsAndPrivacyText()
@@ -100,12 +98,18 @@ private fun SignupContent(
                 contentAlignment = Alignment.BottomStart
             ) {
                 Column {
-                    ConfirmButton(
-                        labelVal = "save",
+                    ContinueConfirmButton(
+                        labelVal = "Continue",
                         navController = navController,
                         signupViewModel = signupViewModel,
-                        onClick = onSaveUserInfo
+                        onClick = {signupViewModel.signUp()}
                     )
+//                    Button(
+//                        onClick = { signupViewModel.signUp()},
+//                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+//                    ) {
+//                        Text(text = "Create a new Story")
+//                    }
                     Spacer(modifier = Modifier.height(10.dp))
                     BottomSignupTextComponent(navController)
                 }

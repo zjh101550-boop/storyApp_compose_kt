@@ -18,4 +18,5 @@ public interface TFavoriteAuthorService {
     ResponseMap.ResultData tFavoriteAuthorListByAuthorName(Map<String, Object> values);
     ResponseMap.ResultData tFavoriteAuthorInsert(Map<String, Object> values);
     ResponseMap.ResultData tFavoriteAuthorDel(Map<String, Object> values);
+    ResponseMap.ResultData tFavoriteAuthorInsertByStoryId(Map<String, Object> values);
 }

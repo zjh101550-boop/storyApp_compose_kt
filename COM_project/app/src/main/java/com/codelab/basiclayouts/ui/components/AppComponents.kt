@@ -27,6 +27,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,15 +44,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.codelab.basiclayouts.R
-import com.codelab.basiclayouts.ui.screens.shared.Identity
 import com.codelab.basiclayouts.ui.theme.BgSocial
 import com.codelab.basiclayouts.ui.theme.BorderColor
 import com.codelab.basiclayouts.ui.theme.BrandColor
 import com.codelab.basiclayouts.ui.theme.Primary
 import com.codelab.basiclayouts.ui.theme.Tertirary
+import com.codelab.basiclayouts.ui.viewmodel.shared.Identity
+import com.codelab.basiclayouts.ui.viewmodel.shared.ResetPasswordViewModel
 import com.codelab.basiclayouts.ui.viewmodel.shared.SignupViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun ImageComponent(image: Int) {
@@ -87,7 +91,9 @@ fun ForgotPasswordHeadingTextComponent(action: String) {
         )
         Text(
             text = "Password?",
-            modifier = Modifier.fillMaxWidth().offset(y = (-18).dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset(y = (-18).dp),
             fontSize = 39.sp,
             color = Primary,
             fontWeight = FontWeight.Bold
@@ -99,7 +105,8 @@ fun ForgotPasswordHeadingTextComponent(action: String) {
 fun MyTextField(
     labelVal: String,
     icon: Int,
-    onTextChange: (String) -> Unit
+    onTextChange: (String) -> Unit,
+
 ) {
     var textVal by remember {
         mutableStateOf("")
@@ -306,56 +313,24 @@ fun ForgotPasswordTextComponent(navController: NavHostController) {
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         modifier = Modifier.clickable {
-            navController.navigate("ForgotPassword")
+            navController.navigate("Reset")
         }
     )
 }
 
 @Composable
-fun MyButton(labelVal: String, navController: NavHostController) {
-    Button(
-        onClick = { },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = BrandColor
-        ),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = labelVal,
-            color = Color.White,
-            fontSize = 18.sp,
-            modifier = Modifier.clickable {
-                if (labelVal == "Submit") {
-                    navController.navigate("ResetPassword")
-                }
-            }
-        )
-    }
-}
-
-@Composable
-fun ConfirmButton(
-        labelVal: String,
-        navController: NavHostController,
-        signupViewModel: SignupViewModel,
-        onClick: () -> Unit,
+fun MyButton(labelVal: String,
+             navController: NavHostController,
+             resetPasswordViewModel: ResetPasswordViewModel,
+             onClick: () -> Unit
 ) {
     Button(
         onClick = {
-            if (labelVal == "Save") {
-                if (signupViewModel.state.value.password == signupViewModel.state.value.confirmPassword) {
-                    navController.navigate("LoginScreen")
-                }else {
-                    //"Confirm password is wrong"
-                }
-            }else if (labelVal == "Submit") {
-                if (signupViewModel.state.value.password == signupViewModel.state.value.confirmPassword) {
-                    navController.navigate("LoginScreen")
-                }else {
-                    //"Confirm password is wrong"
-                }
+            if (labelVal == "Submit") {
+                resetPasswordViewModel.setActiveScreen("ResetPasswordScreen")
+//                onClick()
+//                navController.navigate("ResetPassword")
             }
-            onClick()
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = BrandColor
@@ -372,18 +347,89 @@ fun ConfirmButton(
 }
 
 @Composable
-fun MainPageButton(labelVal: String,
+fun ContinueConfirmButton(
+    labelVal: String,
+    navController: NavHostController,
+    signupViewModel: SignupViewModel,
+    onClick: () -> Unit,
+) {
+    Button(
+        onClick = {
+            Log.d("ConfirmButton", "Button clicked")
+            if (labelVal == "Continue") {
+                if (signupViewModel.state.value.password == signupViewModel.state.value.confirmPassword) {
+                    onClick()
+                    navController.navigate("LoginScreen")
+                }
+            }
+        },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = BrandColor
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = labelVal,
+            color = Color.White,
+            fontSize = 18.sp,
+            modifier = Modifier.clickable { }
+        )
+    }
+}
+
+@Composable
+fun SubmitConfirmButton(
+    labelVal: String,
+    navController: NavHostController,
+    resetPasswordViewModel: ResetPasswordViewModel,
+    onClick: () -> Unit,
+) {
+    Button(
+        onClick = {
+            Log.d("ConfirmButton", "Button clicked")
+            if (labelVal == "Submit") {
+                if (resetPasswordViewModel.state.value.password == resetPasswordViewModel.state.value.confirmPassword) {
+                    onClick()
+                    navController.navigate("LoginScreen")
+                }
+            }
+        },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = BrandColor
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = labelVal,
+            color = Color.White,
+            fontSize = 18.sp,
+            modifier = Modifier.clickable { }
+        )
+    }
+}
+
+@Composable
+fun MainPageButton(
+    isProve:Boolean,
+    labelVal: String,
                    identity: Identity,
                    navController: NavHostController,
                    onclick:()->Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Button(
         onClick = {
-            onclick()
-            when (identity) {
-                Identity.READER -> navController.navigate("GuestScreen")
-                Identity.AUTHOR -> navController.navigate("author_home_Screen")
+            coroutineScope.launch {
+                // Handle the onClick event within a coroutine
+                onclick()
             }
+            if(isProve){
+                when (identity) {
+                    Identity.READER -> navController.navigate("GuestScreen")
+                    Identity.AUTHOR -> navController.navigate("author_home_Screen")
+                }
+            }
+
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = BrandColor

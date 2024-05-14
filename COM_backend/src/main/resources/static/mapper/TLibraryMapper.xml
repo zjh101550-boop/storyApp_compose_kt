@@ -2,14 +2,79 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.uos.comp6239backend.mapper.TLibraryMapper">
 
-<!--暂时还有问题-->
+  <!--根据读者ID展示其收藏的所有的书和剧本作者，阅读进度-->
+<select id="selectReaderStoryDetail" parameterType="java.util.Map" resultType="com.uos.comp6239backend.tdata.entity.TStoryDetail">
+    SELECT DISTINCT
+        s.story_id,
+        s.story_name,
+        s.story_description,
+        s.story_trends,
+        s.story_cover_url,
+        u.user_id AS author_id,
+        u.username AS author_name
+    FROM
+        t_story s
+    JOIN
+        t_users u ON s.author_id = u.user_id
+        WHERE s.is_used = 1
+</select>
+
+<!--    主页查询所有故事的基本信息-->
+    <select id="selectAllStoryDetail" parameterType="java.util.Map" resultType="com.uos.comp6239backend.tdata.entity.TStoryDetail">
+    SELECT DISTINCT
+    s.*
+    FROM
+    t_story s
+    where is_used = 1
+    </select>
+
+
+  <!--根据读者ID展示图书馆-->
   <select id="tLibraryList" resultType="com.uos.comp6239backend.tdata.entity.TStorys">
     select ts.*
-    from t_story ts,t_library tl,t_user,tu
-    where  ts.is_use=1 and tl.is_use=1 and tu.is_use=1 and tl.story_id = ts.story_id and tu.user_id = tl.reader_id
+    from t_story ts,t_library tl,t_users tu
+    where
+    reader_id = #{readerId,jdbcType=INTEGER} and
+    ts.is_used=1 and tl.is_used=1 and tu.is_used=1 and
+    tl.story_id = ts.story_id and tu.user_id = tl.reader_id
 
   </select>
 
+  <!--根据读者ID和剧本ID和剧本作者ID展示剧本作者，阅读进度-->
+  <select id="tLibraryListReaderStoryForUiState" resultType="com.uos.comp6239backend.tdata.entity.TStorysForUiState">
+    select ts.*
+    from t_story ts,t_library tl,t_users tu
+    where
+    reader_id = #{readerId,jdbcType=INTEGER} and
+    ts.is_used=1 and tl.is_used=1 and tu.is_used=1 and
+    tl.story_id = ts.story_id and tu.user_id = tl.reader_id
+  </select>
+
+    <!--根据读者ID和剧本ID和剧本作者ID展示剧本作者，阅读进度-->
+    <select id="tLibraryListReaderStoryForUiStateByNull" resultType="com.uos.comp6239backend.tdata.entity.TStorysForUiState">
+    select ts.*
+    from t_story ts
+    where
+    ts.is_used=1
+  </select>
+
+    <!--根据剧本作者ID展示剧本作者-->
+  <select id="tAuthorNameByAuthorId" resultType="java.lang.String">
+    select tu.username as author
+    from t_users tu
+    where
+    user_id = #{authorId,jdbcType=INTEGER} and tu.is_used=1
+  </select>
+
+    <!--根据读者ID和故事ID展示阅读进度文本-->
+  <select id="tCurrentProgressByReaderIdAndStoryId" resultType="java.lang.Integer">
+    select trsh.current_progress
+    from t_reader_story_history trsh
+    where
+    reader_id = #{readerId,jdbcType=INTEGER} and trsh.is_used=1 and story_id = #{storyId,jdbcType=INTEGER}
+  </select>
+
+<!--  收藏某个剧本-->
   <insert id="tLibraryInsert" parameterType="java.util.Map">
     insert into t_library
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -36,6 +101,7 @@
     </trim>
   </insert>
 
+<!--  取消收藏某个剧本-->
   <update id="tLibraryDel"  parameterType="java.util.Map">
     update t_library set is_used = 0
     where reader_id = #{readerId,jdbcType=INTEGER} and story_id = #{storyId,jdbcType=INTEGER}
