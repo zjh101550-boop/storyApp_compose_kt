@@ -262,7 +262,7 @@ private fun queryLibraryStory (): List<Story> {
 
 @Composable
 fun GuestProfile (navController: NavHostController) {
-    navController.navigate("ProfileScreen")
+    ProfileScreen(navController)
 }
 
 //@Composable
