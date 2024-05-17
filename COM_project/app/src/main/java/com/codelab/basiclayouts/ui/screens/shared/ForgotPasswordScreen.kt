@@ -28,7 +28,7 @@ import com.codelab.basiclayouts.ui.viewmodel.shared.ResetPasswordViewModel
 @Composable
 fun ForgotPasswordScreen(
     navController: NavHostController,
-    viewModel: ResetPasswordViewModel,
+    viewModel: ResetPasswordViewModel
     ) {
     val state by viewModel.state.collectAsState()
     ForgotPasswordContent(
@@ -64,18 +64,18 @@ private fun ForgotPasswordContent(
                 labelVal = "email ID",
                 icon = R.drawable.share_at_symbol,
                 onTextChange = onChangeEmail,
-
             )
             MyButton(labelVal = "Submit", navController,
                 resetPasswordViewModel = resetPasswordViewModel,
-                onClick = {resetPasswordViewModel.ResetPassword()}
+                onClick = {}
             )
         }
     }
 }
-//@Preview(showBackground = true)
-//@Composable
-//fun ForgotPasswordScreenPreview() {
-//    val navController = rememberNavController()
-//    ForgotPasswordScreen(navController = navController)
-//}
+
+@Preview(showBackground = true)
+@Composable
+fun ForgotPasswordScreenPreview() {
+    val navController = rememberNavController()
+    ForgotPasswordScreen(navController, hiltViewModel())
+}

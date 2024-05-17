@@ -326,10 +326,8 @@ fun MyButton(labelVal: String,
 ) {
     Button(
         onClick = {
-            if (labelVal == "Submit") {
+            if (labelVal == "Submit" && resetPasswordViewModel.state.value.email.isNotEmpty()) {
                 resetPasswordViewModel.setActiveScreen("ResetPasswordScreen")
-//                onClick()
-//                navController.navigate("ResetPassword")
             }
         },
         colors = ButtonDefaults.buttonColors(
